@@ -1,5 +1,7 @@
 vim.cmd("filetype plugin indent on")
 
+vim.g.netrw_bufsettings = "noma nomod nu nobl nowrap ro" -- Set rel line numbers in netrw
+
 -- Line numbers
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -20,7 +22,7 @@ vim.opt.scrolloff = 8
 -- Statusline
 vim.opt.laststatus = 2
 
-local function display_mode()
+local function display_mode() -- TODO: Add visual block
     local mode = vim.fn.mode()
     if mode == "n" then
         return "-- NORMAL --"
@@ -30,8 +32,6 @@ local function display_mode()
         return "-- VISUAL --"
     elseif mode == "V" then
         return "-- VISUAL LINE --"
-    elseif mode == "ctrl-V " then -- TODO: Need to fix this.
-        return "-- VISUAL BLOCK --"
     elseif mode == "R" then
         return "-- REPLACE --"
     elseif mode == "c" then
