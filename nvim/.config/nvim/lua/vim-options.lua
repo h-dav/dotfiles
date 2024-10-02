@@ -1,5 +1,7 @@
 vim.cmd("filetype plugin indent on")
 
+vim.g.colorscheme = "default"
+
 vim.g.netrw_bufsettings = "noma nomod nu nobl nowrap ro" -- Set rel line numbers in netrw
 
 -- Line numbers
@@ -78,8 +80,8 @@ local function set_statusline()
 end
 
 vim.api.nvim_create_autocmd("ModeChanged", {
-  pattern = "*", -- Trigger on any mode change
-  callback = function()
-    vim.opt.statusline = set_statusline()
-  end,
+    pattern = "*", -- Trigger on any mode change
+    callback = function()
+        vim.opt.statusline = set_statusline()
+    end,
 })
