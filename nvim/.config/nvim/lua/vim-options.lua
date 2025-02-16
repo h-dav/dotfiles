@@ -79,9 +79,16 @@ local function set_statusline()
     )
 end
 
+local function set_colorcolumn()
+    vim.api.nvim_set_option_value("colorcolumn", "120", {})
+end
+
 vim.api.nvim_create_autocmd("ModeChanged", {
     pattern = "*", -- Trigger on any mode change
     callback = function()
+        -- Set column/line length guide - set here in case not already set after opening new buffer
+        set_colorcolumn()
+
         vim.opt.statusline = set_statusline()
     end,
 })

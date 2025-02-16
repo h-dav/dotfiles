@@ -134,7 +134,7 @@ return {
                         require("lspconfig").gopls.setup({
                             settings = {
                                 gopls = {
-                                    buildFlags = { "-tags=unit,integration" }
+                                    buildFlags = { "-tags=unit,integration,dynamic" }
                                 }
                             }
                         })
@@ -146,6 +146,34 @@ return {
                     ["gopls"] = { "go", "gomod", "gowork", "gotmpl" },
                     ["lua_ls"] = { "lua" },
                 }
+            })
+        end,
+    },
+    {
+        "mfussenegger/nvim-lint",
+        dependencies = {
+            "williamboman/mason.nvim",
+            "rshkarin/mason-nvim-lint",
+        },
+        events = { "BufWritePost", "BufReadPost", "InsertLeave" },
+        config = function()
+            local lint = require("lint")
+            lint.linters.golangcilint.args = vim.list_extend(
+                lint.linters.golangcilint.args,
+                { "--build-tags=unit,integration" }
+            )
+            lint.linters_by_ft = {
+                go = { "golangcilint" },
+            }
+            vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+                group = vim.api.nvim_create_augroup("nvim-lint", { clear = true }),
+                callback = function()
+                    lint.try_lint()
+                end,
+            })
+            require("mason-nvim-lint").setup({
+                ensure_installed = { "golangci-lint" },
+                automatic_installation = false,
             })
         end,
     },
