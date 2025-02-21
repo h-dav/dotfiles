@@ -1,8 +1,9 @@
 vim.g.mapleader = " "
 
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)     -- Open to netrw
+vim.keymap.set("n", "<leader>pv", vim.cmd.Explore)  -- Open to netrw
+vim.keymap.set("n", "<leader>vp", vim.cmd.Vexplore) -- Open to netrw in a visual split tab
 
-vim.keymap.set("n", "<leader>nt", vim.cmd.tabnew) -- Open new tab
+vim.keymap.set("n", "<leader>nt", vim.cmd.tabnew)   -- Open new tab
 
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
