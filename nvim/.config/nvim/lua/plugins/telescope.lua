@@ -7,7 +7,6 @@ return {
         vim.keymap.set('n', '<leader>pf', telescope.find_files, {}) -- project file
         vim.keymap.set('n', '<leader>pg', telescope.live_grep, {})  -- project grep
         vim.keymap.set('n', '<leader>pr', telescope.registers, {})
-        vim.keymap.set('n', '<leader>po', telescope.oldfiles, {})   -- recently opened files
-    end
-
+        vim.keymap.set('n', '<leader>pm', telescope.man_pages, {})  -- browse man pages
+    end,
 }
