@@ -117,6 +117,9 @@ return {
                     vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
                     vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
                     vim.keymap.set("n", "<leader>f", "<cmd>lua vim.lsp.buf.format()<cr>", opts)
+                    vim.keymap.set("n", "<leader>d", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
+
+                    vim.diagnostic.config({ virtual_text = true })
                 end,
                 capabilities = require("cmp_nvim_lsp").default_capabilities(),
             })
@@ -153,7 +156,6 @@ return {
         "mfussenegger/nvim-lint",
         dependencies = {
             "williamboman/mason.nvim",
-            "rshkarin/mason-nvim-lint",
         },
         events = { "BufWritePost", "BufReadPost", "InsertLeave" },
         config = function()
@@ -170,10 +172,6 @@ return {
                 callback = function()
                     lint.try_lint()
                 end,
-            })
-            require("mason-nvim-lint").setup({
-                ensure_installed = { "golangci-lint" },
-                automatic_installation = false,
             })
         end,
     },
