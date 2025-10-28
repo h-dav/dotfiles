@@ -39,45 +39,45 @@ return {
                 settings = {
                     gopls = {
                         buildFlags = { "-tags=unit,integration" },
-                        filetypes = { "go", "gomod", "gowork", "gotmpl", "gosum" },
+                        -- filetypes = { "go", "gomod", "gowork", "gotmpl", "gosum" },
                         gofumpt = true,
                     },
                 },
             })
 
             require("mason-lspconfig").setup({
-                ensure_installed = { "biome", "gopls", "lua_ls" },
+                ensure_installed = { "gopls", "lua_ls" },
             })
 
             require("fzf-lua").register_ui_select();
         end,
     },
-    {
-        url = "https://github.com/mfussenegger/nvim-lint",
-        dependencies = {
-            { url = "https://github.com/williamboman/mason.nvim" },
-            { url = "https://github.com/rshkarin/mason-nvim-lint" },
-        },
-        events = { "BufWritePost", "BufReadPost", "InsertLeave" },
-        config = function()
-            local lint = require("lint")
-            lint.linters.golangcilint.args = vim.list_extend(
-                lint.linters.golangcilint.args,
-                { "--build-tags=unit,integration" }
-            )
-            lint.linters_by_ft = {
-                go = { "golangcilint" },
-            }
-            vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
-                group = vim.api.nvim_create_augroup("nvim-lint", { clear = true }),
-                callback = function()
-                    lint.try_lint()
-                end,
-            })
-            require("mason-nvim-lint").setup({
-                ensure_installed = { "golangcilint" },
-                automatic_installation = false,
-            })
-        end,
-    },
+    -- {
+    --     url = "https://github.com/mfussenegger/nvim-lint",
+    --     dependencies = {
+    --         { url = "https://github.com/williamboman/mason.nvim" },
+    --         { url = "https://github.com/rshkarin/mason-nvim-lint" },
+    --     },
+    --     events = { "BufWritePost", "BufReadPost", "InsertLeave" },
+    --     config = function()
+    --         local lint = require("lint")
+    --         lint.linters.golangcilint.args = vim.list_extend(
+    --             lint.linters.golangcilint.args,
+    --             { "--build-tags=unit,integration" }
+    --         )
+    --         lint.linters_by_ft = {
+    --             go = { "golangcilint" },
+    --         }
+    --         vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+    --             group = vim.api.nvim_create_augroup("nvim-lint", { clear = true }),
+    --             callback = function()
+    --                 lint.try_lint()
+    --             end,
+    --         })
+    --         require("mason-nvim-lint").setup({
+    --             ensure_installed = { "golangcilint" },
+    --             automatic_installation = false,
+    --         })
+    --     end,
+    -- },
 }
