@@ -1,161 +1,62 @@
 return {
     {
-        "williamboman/mason.nvim",
-        config = true,
-    },
-    {
-        "VonHeikemen/lsp-zero.nvim",
-        branch = "v4.x",
-        lazy = true,
-    },
-    {
-        "hrsh7th/nvim-cmp",
+        url = "https://github.com/saghen/blink.cmp",
+        version = "1.*",
         dependencies = {
-            "hrsh7th/cmp-path",
-            "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-nvim-lsp",
-            "hrsh7th/cmp-nvim-lsp-signature-help",
             {
-                "L3MON4D3/LuaSnip",
+                url = "https://github.com/L3MON4D3/LuaSnip",
                 version = "v2.*",
-                dependencies = { "rafamadriz/friendly-snippets" },
+                dependencies = { url = "https://github.com/rafamadriz/friendly-snippets" },
                 build = "make install_jsregexp",
                 config = function() require("luasnip.loaders.from_vscode").lazy_load() end,
             },
-            "saadparwaiz1/cmp_luasnip",
         },
-        event = "InsertEnter",
-        config = function()
-            local cmp = require("cmp")
-            local types = require("cmp.types")
-            local luasnip = require("luasnip")
-            local cmp_format = require("lsp-zero").cmp_format({ details = true })
-
-            local select_ops = { behavior = types.cmp.SelectBehavior.Select }
-
-            cmp.setup({
-                sources = {
-                    { name = "path" },
-                    { name = "nvim_lsp" },
-                    { name = "luasnip" },
-                    { name = "buffer" },
-                    { name = "nvim_lsp_signature_help" },
-                },
-                snippet = {
-                    expand = function(args)
-                        luasnip.lsp_expand(args.body)
-                    end,
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ["<C-y>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i", "s" }),
-                    ["<C-e>"] = cmp.mapping(cmp.mapping.abort(), { "i", "s" }),
-                    ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "s" }),
-                    ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(-4, { "i", "s" })),
-                    ["<C-n>"] = cmp.mapping(function(_)
-                        if cmp.visible() then
-                            cmp.select_next_item(select_ops)
-                        else
-                            cmp.complete()
-                        end
-                    end, { "i", "s" }),
-                    ["<C-p>"] = cmp.mapping(function(_)
-                        if cmp.visible() then
-                            cmp.select_prev_item(select_ops)
-                        else
-                            cmp.complete()
-                        end
-                    end, { "i", "s" }),
-                    ["<C-Space>"] = cmp.mapping(cmp.mapping.complete()),
-                }),
-                preselect = cmp.PreselectMode.None,
-                completion = { completeopt = "menu,menuone,noinsert,noselect,preview" },
-                formatting = cmp_format,
-                window = {
-                },
-            })
-        end,
+        opts = {
+            signature = { enabled = true },
+            snippets = { preset = "luasnip" },
+            sources = { default = { "lsp", "path", "snippets", "buffer" } },
+            completion = {
+                documentation = { auto_show = true },
+                ghost_text = { enabled = false },
+                menu = {
+                    draw = {
+                        columns = { { "label", "label_description", gap = 0 }, { "kind" } },
+                    }
+                }
+            },
+            keymap = { preset = 'default' },
+        },
     },
     {
-        "hrsh7th/cmp-cmdline",
-        event = "CmdlineEnter",
-        config = function()
-            local cmp = require("cmp")
-            cmp.setup.cmdline({ "/", "?" }, {
-                mapping = cmp.mapping.preset.cmdline(),
-                sources = { { name = "buffer" } }
-            })
-            cmp.setup.cmdline(":", {
-                mapping = cmp.mapping.preset.cmdline({}),
-                sources = cmp.config.sources({ { name = "path" } }, { { name = "cmdline" } }),
-            })
-        end,
-    },
-    {
-        "neovim/nvim-lspconfig",
+        url = "https://github.com/williamboman/mason-lspconfig.nvim",
         dependencies = {
-            "hrsh7th/cmp-nvim-lsp",
-            "williamboman/mason.nvim",
-            "williamboman/mason-lspconfig.nvim",
+            { url = "https://github.com/williamboman/mason.nvim", opts = {} },
+            { url = "https://github.com/neovim/nvim-lspconfig" },
+            { url = "https://github.com/saghen/blink.cmp" },
         },
-        cmd = "LspInfo",
-        event = { "BufReadPre", "BufNewFile" },
         config = function()
-            local lsp_zero = require("lsp-zero")
-
-            lsp_zero.extend_lspconfig({
-                sign_text = true,
-                lsp_attach = function(_, bufnr)
-                    local opts = { buffer = bufnr }
-
-                    vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-                    vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>zz", opts)
-                    vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>zz", opts)
-                    vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-                    vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>zz", opts)
-                    vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-                    vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-                    vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-                    vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-                    vim.keymap.set("n", "<leader>f", "<cmd>lua vim.lsp.buf.format()<cr>", opts)
-                    vim.keymap.set("n", "<leader>d", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
-
-                    vim.diagnostic.config({ virtual_text = true })
-                end,
-                capabilities = require("cmp_nvim_lsp").default_capabilities(),
+            vim.lsp.config("gopls", {
+                settings = {
+                    gopls = {
+                        buildFlags = { "-tags=unit,integration" },
+                        filetypes = { "go", "gomod", "gowork", "gotmpl", "gosum" },
+                        gofumpt = true,
+                    },
+                },
             })
 
             require("mason-lspconfig").setup({
-                automatic_installation = false,
-                ensure_installed = { "gopls", "lua_ls" },
-                handlers = {
-                    -- This first function is the "default handler"
-                    -- it applies to every language server without a "custom handler"
-                    function(server_name)
-                        require("lspconfig")[server_name].setup({})
-                    end,
-                    gopls = function()
-                        require("lspconfig").gopls.setup({
-                            settings = {
-                                gopls = {
-                                    buildFlags = { "-tags=unit,integration,dynamic" }
-                                }
-                            }
-                        })
-                    end,
-                },
+                ensure_installed = { "biome", "gopls", "lua_ls" },
             })
-            lsp_zero.format_on_save({
-                servers = {
-                    ["gopls"] = { "go", "gomod", "gowork", "gotmpl" },
-                    ["lua_ls"] = { "lua" },
-                }
-            })
+
+            require("fzf-lua").register_ui_select();
         end,
     },
     {
-        "mfussenegger/nvim-lint",
+        url = "https://github.com/mfussenegger/nvim-lint",
         dependencies = {
-            "williamboman/mason.nvim",
+            { url = "https://github.com/williamboman/mason.nvim" },
+            { url = "https://github.com/rshkarin/mason-nvim-lint" },
         },
         events = { "BufWritePost", "BufReadPost", "InsertLeave" },
         config = function()
@@ -172,6 +73,10 @@ return {
                 callback = function()
                     lint.try_lint()
                 end,
+            })
+            require("mason-nvim-lint").setup({
+                ensure_installed = { "golangcilint" },
+                automatic_installation = false,
             })
         end,
     },

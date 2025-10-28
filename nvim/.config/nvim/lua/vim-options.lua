@@ -15,7 +15,7 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 
 -- Diagnostics
--- vim.diagnostic.config({ virtual_text = true })
+vim.diagnostic.config({ virtual_text = true })
 
 -- Status bar
 vim.opt.showmode = false
