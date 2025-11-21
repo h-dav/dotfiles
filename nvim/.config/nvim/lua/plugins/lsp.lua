@@ -45,8 +45,23 @@ return {
                 },
             })
 
+            vim.lsp.config("rust_analyzer", {
+                settings = {
+                    ["rust-analyzer"] = {
+                        cargo = {
+                            buildScripts = {
+                                enable = true,
+                            },
+                        },
+                        procMacro = {
+                            enable = true,
+                        },
+                    },
+                },
+            })
+
             require("mason-lspconfig").setup({
-                ensure_installed = { "gopls", "lua_ls" },
+                ensure_installed = { "gopls", "lua_ls", "rust_analyzer" },
             })
 
             require("fzf-lua").register_ui_select();

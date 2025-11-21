@@ -22,6 +22,7 @@ return {
                 "json",
                 "lua",
                 "markdown",
+                "rust",
             }
         },
         config = function(_, opts)
