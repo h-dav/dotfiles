@@ -1,12 +1,22 @@
 vim.cmd("filetype plugin indent on")
 
-vim.g.colorscheme = "default"
+vim.opt.termguicolors = true
 
-vim.g.netrw_bufsettings = "noma nomod nu nobl nowrap ro" -- Set rel line numbers in netrw
+-- Netrw
+vim.g.netrw_bufsettings  = "noma nomod nu rnu nobl nowrap ro" -- Absolute and relative line numbers
+vim.g.netrw_banner    = 1  -- Show the banner
+vim.g.netrw_liststyle = 1  -- Long view (filename, size, timestamp)
+
+-- File search
+vim.opt.path:append("**")
+vim.opt.wildmenu = true
+vim.opt.wildignorecase = true
+vim.opt.wildignore:append({ "*/.git/*", "*/vendor/*" })
 
 -- Line numbers
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.cursorline = true
 
 -- Tabs
 vim.opt.expandtab = true
@@ -17,8 +27,25 @@ vim.opt.shiftwidth = 4
 -- Diagnostics
 vim.diagnostic.config({ virtual_text = true })
 
+-- Search
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.inccommand = "split"
+
+-- Splits
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+
+-- System clipboard
+vim.opt.clipboard = "unnamedplus"
+
+-- Persistent undo, no swapfile
+vim.opt.undofile = true
+vim.opt.swapfile = false
+
 -- Status bar
 vim.opt.showmode = false
+vim.opt.signcolumn = "yes"
 
 vim.opt.updatetime = 50
 
@@ -27,71 +54,22 @@ vim.opt.scrolloff = 8
 -- Statusline
 vim.opt.laststatus = 2
 
-local function display_mode() -- TODO: Add visual block
-    local mode = vim.fn.mode()
-    if mode == "n" then
-        return "-- NORMAL --"
-    elseif mode == "i" then
-        return "-- INSERT --"
-    elseif mode == "v" then
-        return "-- VISUAL --"
-    elseif mode == "V" then
-        return "-- VISUAL LINE --"
-    elseif mode == "R" then
-        return "-- REPLACE --"
-    elseif mode == "c" then
-        return "-- COMMAND --"
-    else
-        return mode
-    end
+local modes = {
+    n  = "NORMAL",   i  = "INSERT",  v  = "VISUAL",
+    V  = "V-LINE",   R  = "REPLACE", c  = "COMMAND",
+    t  = "TERMINAL", ["\22"] = "V-BLOCK",
+}
+
+_G.Statusline = function()
+    local mode = "-- " .. (modes[vim.fn.mode()] or vim.fn.mode()) .. " --"
+    local branch = vim.b.gitsigns_head and (" [branch: " .. vim.b.gitsigns_head .. "]") or ""
+    return " " .. mode .. " %f" .. branch .. "%m%=%y %{&fileencoding?&fileencoding:&encoding} [%{&fileformat}] %p%% %l:%c"
 end
 
-local function git_branch()
-    local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
-    if string.len(branch) > 0 then
-        return "[branch: " .. branch .. "]"
-    else
-        return "[not in git repo]"
-    end
-end
+vim.opt.statusline = "%!v:lua.Statusline()"
 
-local function set_statusline()
-    local mode = display_mode()
-    local file_name = " %f"
-    local branch = git_branch()
-    local modified = "%m"
-    local align_right = "%="
-    local fileencoding = " %{&fileencoding?&fileencoding:&encoding}"
-    local fileformat = " [%{&fileformat}]"
-    local filetype = " %y"
-    local percentage = " %p%%"
-    local linecol = " %l:%c"
+-- Color column
+vim.opt.colorcolumn = "120"
 
-    return string.format(
-        " %s %s %s%s%s%s%s%s%s%s",
-        mode,
-        file_name,
-        branch,
-        modified,
-        align_right,
-        filetype,
-        fileencoding,
-        fileformat,
-        percentage,
-        linecol
-    )
-end
-
-local function set_colorcolumn()
-    vim.api.nvim_set_option_value("colorcolumn", "120", {})
-end
-
-vim.api.nvim_create_autocmd("ModeChanged", {
-    pattern = "*", -- Trigger on any mode change
-    callback = function()
-        -- Set column/line length guide - set here in case not already set after opening new buffer
-        set_colorcolumn()
-
-        vim.opt.statusline = set_statusline()
-    end,
-})
+-- Make git blame text visible against cursorline
+vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#a8a8a8", italic = true })

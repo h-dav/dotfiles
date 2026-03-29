@@ -1,0 +1,51 @@
+{
+  "Daily Note": {
+    "prefix": "daily",
+    "body": [
+      "## $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE ($CURRENT_DAY_NAME)",
+      "",
+      "### Todos",
+      "",
+      "- [ ] $0"
+    ],
+    "description": "Daily note header with date"
+  },
+  "Weekly Note": {
+    "prefix": "weekly",
+    "body": [
+      "## Week: $1 — $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+      "",
+      "### What happened",
+      "",
+      "$2",
+      "",
+      "### What I learnt",
+      "",
+      "$3",
+      "",
+      "### Targets for next week",
+      "",
+      "$0"
+    ],
+    "description": "Weekly review section (tab to fill in Monday's date)"
+  },
+  "Monthly Note": {
+    "prefix": "monthly",
+    "body": [
+      "## Month: $CURRENT_MONTH_NAME $CURRENT_YEAR",
+      "",
+      "### Highlights",
+      "",
+      "$1",
+      "",
+      "### Key learnings",
+      "",
+      "$2",
+      "",
+      "### Goals for next month",
+      "",
+      "$0"
+    ],
+    "description": "Monthly review section"
+  }
+}
