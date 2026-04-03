@@ -3,6 +3,7 @@
 --   go install golang.org/x/tools/gopls@latest
 --   rustup component add rust-analyzer
 --   brew install lua-language-server
+--   cargo install harper-ls
 
 -- gopls (Go)
 vim.lsp.config("gopls", {
@@ -47,7 +48,19 @@ vim.lsp.config("lua_ls", {
     },
 })
 
-vim.lsp.enable({ "gopls", "rust_analyzer", "lua_ls" })
+-- harper-ls (grammar and spell checking)
+vim.lsp.config("harper_ls", {
+    cmd = { "harper-ls", "--stdio" },
+    filetypes = { "markdown", "text", "gitcommit" },
+    root_markers = { ".git" },
+    settings = {
+        ["harper-ls"] = {
+            dialect = "British",
+        },
+    },
+})
+
+vim.lsp.enable({ "gopls", "rust_analyzer", "lua_ls", "harper_ls" })
 
 -- Auto-format on save
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -56,4 +69,3 @@ vim.api.nvim_create_autocmd("BufWritePre", {
         vim.lsp.buf.format({ async = false })
     end,
 })
-
